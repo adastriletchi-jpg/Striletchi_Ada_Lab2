@@ -1,11 +1,27 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Striletchi_Ada_Lab2.Data;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 var builder = WebApplication.CreateBuilder(args);
-var connectionString = builder.Configuration.GetConnectionString("Striletchi_Ada_Lab2Context") ?? throw new InvalidOperationException("Connection string 'Striletchi_Ada_Lab2Context' not found.");
 
-builder.Services.AddDbContext<Striletchi_Ada_Lab2Context>(options => options.UseSqlServer(connectionString));
 
-// Add services to the container.
+
 builder.Services.AddRazorPages();
+
+var connectionString = builder.Configuration.GetConnectionString("Striletchi_Ada_Lab2Context") 
+    ?? throw new InvalidOperationException("Connection string 'Striletchi_Ada_Lab2Context' not found.");
+
+builder.Services.AddDbContext<Striletchi_Ada_Lab2Context>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Striletchi_Ada_Lab2Context") 
+    ?? throw new InvalidOperationException("Connection string 'Striletchi_Ada_Lab2Context' not found.")));
+
+builder.Services.AddDbContext<LibraryIdentityContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Striletchi_Ada_Lab2Context") 
+    ?? throw new InvalidOperationException("Connection string 'Striletchi_Ada_Lab2Context' not found.")));
+
+builder.Services.AddDefaultIdentity<ApplicationUser>(options => 
+    options.SignIn.RequireConfirmedAccount = false)
+    .AddEntityFrameworkStores<LibraryIdentityContext>();
 
 var app = builder.Build();
 
